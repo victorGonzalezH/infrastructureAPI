@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ApplicationLib.Microservices;
 
 namespace Infrastructure.API
 {
@@ -13,12 +14,15 @@ namespace Infrastructure.API
     {
         public static void Main(string[] args)
         {
+            
+            MicroserviceHost.Build<StartupCommunication>("appsettings.json").UseTcp<TcpSettings>().Run();
+            
+            // Creacion del servidor Web API
             CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+            Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });

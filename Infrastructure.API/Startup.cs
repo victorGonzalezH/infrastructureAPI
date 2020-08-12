@@ -67,6 +67,7 @@ namespace Infrastructure.API
                 //Se agrega la configuracion de correo electronico para el servicio de correo
                 services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
+                services.AddSingleton<EmailSettings>(sp => sp.GetRequiredService<IOptions<EmailSettings>>().Value);
 
                 //Se agrega el servicio de aplicacion para la gestion de archivos 
                 services.AddTransient(typeof(IFilesApplication), typeof(FilesApplication));
