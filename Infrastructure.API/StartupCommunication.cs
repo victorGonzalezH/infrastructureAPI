@@ -30,8 +30,7 @@ namespace Infrastructure.API
 
         protected override StartupCommunicationBase ConfigureServices()
         {
-            this.AddTransient<ITcpEmailsController, TcpEmailsController>()
-            .AddTransient<IEmailApplication, EmailApplication>()
+            this.AddTransient<IEmailApplication, EmailApplication>()
             .AddTransient<IMicroserviceController, EmailsController>()
             .AddTransient<IEmailClient, EmailClient>()
             .AddTransient<IHtmlParser, HtmlParser>()

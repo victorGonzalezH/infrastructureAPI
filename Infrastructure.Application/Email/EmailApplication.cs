@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Utils.Email;
 using Utils.IO.Templates;
 using Utils.IO.Templates.Html;
+using Infrastructure.API.Application.Email.UseCases.SendEmail;
+using ApplicationLib.Exceptions;
 using static Utils.Email.EmailClient;
 
 namespace Infrastructure.Application.Email
@@ -44,6 +46,11 @@ namespace Infrastructure.Application.Email
         /// 
         /// </summary>
         private TaskCompletionSource<bool> tcs;
+
+        /// <summary>
+        /// Configuracion para enviar correo, contiene, la cuenta que se usa, usuario, contrasena, servidor, puerto
+        /// </summary>
+        private EmailSettings settings;
 
         /// <summary>
         /// Indica si la ultima operacion de envio resulto exitosa o no
@@ -101,18 +108,20 @@ namespace Infrastructure.Application.Email
         /// 
         /// </summary>
         /// <param name="emailClient"></param>
-        public EmailApplication(IEmailClient emailClient, IHtmlParser htmlParser, ITemplatesManager templatesManager)
+        public EmailApplication(EmailSettings settings, IEmailClient emailClient, IHtmlParser htmlParser, ITemplatesManager templatesManager)
         {
 
             this.emailClient        = emailClient;
 
             this.htmlParser         = htmlParser;
 
-            this.templatesManager = templatesManager;
+            this.templatesManager   = templatesManager;
 
+            this.settings           = settings;
 
             sendSucess = false;
-
+            
+            this.Config(settings.HostName, settings.Port, settings.UserName, settings.Password, settings.Domain, settings.EnableSsl);
                        
         }
 
@@ -126,7 +135,7 @@ namespace Infrastructure.Application.Email
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <param name="domain"></param>
-        public void Config(string host, int port, string userName, string password, string domain, bool enableSsl)
+        private void Config(string host, int port, string userName, string password, string domain, bool enableSsl)
         {
             try
             {
@@ -142,7 +151,6 @@ namespace Infrastructure.Application.Email
             {
                 throw ex;
             }
-
         }
 
 
@@ -185,7 +193,7 @@ namespace Infrastructure.Application.Email
         /// <param name="encoding"></param>
         /// <param name="clientState"></param>
         /// <returns></returns>
-        public Task<bool> Send(string from, string displayName, string subject, string body, bool isBodyHtml, string[] tos, string[] ccs, string[] bccs, Encoding encoding, object clientState)
+        public Task<bool> Send(string from, string displayName, string subject, string body, bool isBodyHtml, bool AreImagesEmbedded, string[] tos, string[] ccs, string[] bccs, Encoding encoding, object clientState)
         {
             try
             {
@@ -195,7 +203,7 @@ namespace Infrastructure.Application.Email
                     tcs = new TaskCompletionSource<bool>();
 
                     List<AlternateView> alternateViews = null;
-                    if (isBodyHtml) //Si el cuerpo del correo es HTML
+                    if (isBodyHtml && AreImagesEmbedded) //Si el cuerpo del correo es HTML
                     {
                         if (htmlParser != null && htmlParser.LoadDocument(body)) //Se analiza el documento con en analizador
                         {
@@ -284,7 +292,7 @@ namespace Infrastructure.Application.Email
                 //Se inicializa la tarea (Task completetion source)
                 tcs = new TaskCompletionSource<bool>();
 
-                //Se obtiene la plantialla
+                //Se obtiene la plantilla
                 Template template = templatesManager.GetTemplateByTemplateIdAndType(templateId, (TemplateType)templateTypeId);
 
                 if (template != null)
@@ -441,7 +449,7 @@ namespace Infrastructure.Application.Email
 
             //Si la operacion de envio no fue exitosa entonces se puede guardar la solicitud de envio y
             //tratar de nuevo mas tarde
-            if (!sendSucess)
+            if (sendSucess)
             {
 
             }
@@ -452,5 +460,41 @@ namespace Infrastructure.Application.Email
         }
 
       
+
+        public Task<bool> Send(SendEmailCommand sendEmailCommand)
+        {
+
+            try
+            {
+                //Se inicializa la tarea (Task completetion source)
+                tcs = new TaskCompletionSource<bool>();
+
+                if (sendEmailCommand.Subject == null || sendEmailCommand.Tos == null)
+                {
+                    throw new BadRequestException();
+                }
+                else
+                {
+                    if (sendEmailCommand.Tos.Length == 0)
+                    {
+                        throw new BadRequestException();
+                    }
+
+                    string from     = settings.UserName + settings.WebDomain;
+                    string[] ccs    = sendEmailCommand.Ccs == null ? new string[] { } : sendEmailCommand.Ccs;
+                    string[] bccs   = sendEmailCommand.Bccs == null ? new string[] { } : sendEmailCommand.Bccs;
+                    string[] tos    = sendEmailCommand.Tos;
+
+                    emailClient.Send(from, displayName, tos, ccs, bccs, sendEmailCommand.Subject, sendEmailCommand.Body, sendEmailCommand.IsBodyHtml, null, Encoding.UTF8, tcs, this);
+
+                    return tcs.Task;
+
+                }
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

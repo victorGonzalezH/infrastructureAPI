@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Threading.Tasks;
+using Infrastructure.API.Application.Email.UseCases.SendEmail;
 
 namespace Infrastructure.Application.Email
 {
@@ -17,7 +18,7 @@ namespace Infrastructure.Application.Email
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <param name="domain"></param>
-        void Config(string host, int port, string userName, string password, string domain, bool enableSsl);
+        //void Config(string host, int port, string userName, string password, string domain, bool enableSsl);
 
         /// <summary>
         /// 
@@ -33,7 +34,7 @@ namespace Infrastructure.Application.Email
         /// <param name="encoding"></param>
         /// <param name="clientState"></param>
         /// <returns></returns>
-        Task<bool> Send(string from, string displayName, string subject, string body, bool isBodyHtml, string[] tos, string[] ccs, string[] bccs, Encoding encoding, object clientState);
+        Task<bool> Send(string from, string displayName, string subject, string body, bool isBodyHtml, bool AreImagesEmbedded, string[] tos, string[] ccs, string[] bccs, Encoding encoding, object clientState);
 
 
 
@@ -69,5 +70,14 @@ namespace Infrastructure.Application.Email
         /// <param name="clientState"></param>
         /// <returns></returns>
         Task<bool> Send(string from, string displayName, string subject, string[] tos, string[] ccs, string[] bccs, string templateId, int templateTypeId, Encoding enconding, object clientState);
+
+
+
+        ///<summary>
+        ///Envia correo electronico
+        ///</summary>
+        /// <param name="sendEmailCommand">Comando para enviar correo electronico</param>
+        /// <returns>Verdadero si el envio fue exitoso, falso en caso contrario</returns>
+        Task<bool> Send(SendEmailCommand sendEmailCommand);
     }
 }

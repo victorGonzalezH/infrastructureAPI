@@ -9,14 +9,19 @@ using Microsoft.Extensions.Options;
 
 
 using ApplicationLib.DataTransferObjects;
+using ApplicationLib.Microservices;
+using ApplicationLib.Microservices.Controllers;
+using ApplicationLib.Microservices.Messages;
+
 using WebApplication.Controllers;
 using Infrastructure.Application.Email;
 using Infrastructure.API.Application.Email.UseCases.SendEmail;
 
 namespace Infrastructure.API.EmailService.Controllers
 {
+    [MicroserviceController("Emails")]
     [Route("api/[controller]")]
-    public class EmailsController: ApiBaseController
+    public class EmailsController: ApiBaseController, IMicroserviceController
     {
 
         /// <summary>
@@ -77,9 +82,6 @@ namespace Infrastructure.API.EmailService.Controllers
                         return BadRequest();
                     }
                  
-                    //Se configura la aplicacion de correo
-                    emailApplication.Config(emailSettings.HostName, emailSettings.Port, emailSettings.UserName, emailSettings.Password, emailSettings.Domain, emailSettings.EnableSsl);
-
                     string from     = emailSettings.UserName + emailSettings.WebDomain;
                     string[] ccs    = emailData.Ccs == null ? new string[] { } : emailData.Ccs;
                     string[] bccs   = emailData.Bccs == null ? new string[] { } : emailData.Bccs;
@@ -94,7 +96,7 @@ namespace Infrastructure.API.EmailService.Controllers
                     }
                     else
                     {
-                        succes = await emailApplication.Send(from, emailSettings.DisplayName, emailData.Subject, emailData.Body, emailData.IsBodyHtml, emailData.Tos, ccs, bccs, Encoding.UTF8, emailData.Id);
+                        succes = await emailApplication.Send(from, emailSettings.DisplayName, emailData.Subject, emailData.Body, false, emailData.IsBodyHtml, emailData.Tos, ccs, bccs, Encoding.UTF8, emailData.Id);
                     }
                     
 
@@ -111,5 +113,24 @@ namespace Infrastructure.API.EmailService.Controllers
         }
 
 
+        ///<summary>
+        ///Envia correo electronico
+        ///</summary>
+        public async Task<object> MicroserviceSend(MicroserviceMessage message)
+        {
+            try
+            {
+                //Este paso de deserializacion se tiene que hacer en el controlador (aqui) por que en la clase
+                //StartupCommunication se desconoce el tipo de dato con que se desarializara en este caso
+                //SendEmailCommand
+                SendEmailCommand sendEmailCommand =  message.DeserializeParamValues<SendEmailCommand>();
+                bool result = await this.emailApplication.Send(sendEmailCommand);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

@@ -54,9 +54,22 @@ namespace Infrastructure.API.Application.Email.UseCases.SendEmail
 
 
         /// <summary>
+        /// En caso de que el cuerpo del coorreo sea HTML y contenga imagenes, indica si esas imagenes seran embedidas
+        /// en el correo / In case the body is html format and has images, this property indicates if those images will be
+        /// embedded in the mail.null In order tu
+        /// </summary>
+        public bool AreImagesEmbedded { get; set;}
+
+
+        /// <summary>
         /// Identificador de la operacion de envio de correo
         /// </summary>
         public string Id { get; set; }
+
+        /// <summary>
+        /// Lenguaje
+        /// </summary>
+        public string Lang {get; set;}
 
     }
 }
