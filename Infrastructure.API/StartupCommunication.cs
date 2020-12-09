@@ -7,6 +7,7 @@ using System.IO;
 using System;
 
 using Infrastructure.API.EmailService.Controllers;
+using Infrastructure.API.Net.Controllers;
 using Infrastructure.Application.Email;
 using Infrastructure.Application.Net;
 using Utils.Email;

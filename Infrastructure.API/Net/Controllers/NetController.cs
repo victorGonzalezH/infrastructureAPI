@@ -13,7 +13,7 @@ using ApplicationLib.Microservices.Controllers;
 using ApplicationLib.Microservices.Messages;
 using Infrastructure.Application.Net;
 
-namespace Infrastructure.API.EmailService.Controllers
+namespace Infrastructure.API.Net.Controllers
 {
     [MicroserviceController("Net")]
     [Route("api/[controller]")]
