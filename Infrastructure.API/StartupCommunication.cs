@@ -8,6 +8,7 @@ using System;
 
 using Infrastructure.API.EmailService.Controllers;
 using Infrastructure.Application.Email;
+using Infrastructure.Application.Net;
 using Utils.Email;
 using Utils.IO.Templates;
 using Utils.IO.Templates.Html;
@@ -32,10 +33,12 @@ namespace Infrastructure.API
         {
             this.AddTransient<IEmailApplication, EmailApplication>()
             .AddTransient<IMicroserviceController, EmailsController>()
+            .AddTransient<IMicroserviceController, NetController>()
             .AddTransient<IEmailClient, EmailClient>()
             .AddTransient<IHtmlParser, HtmlParser>()
             .AddTransient<ITemplatesManager, TemplatesManager>()
             .AddTransient<ISmtpClientWrapper, SmtpClientWrapper>()
+            .AddSingleton<INetApplication, NetApplication>() 
             .AddSingleton<EmailSettings>(sp => sp.GetRequiredService<IOptions<EmailSettings>>().Value)
             .Configure<EmailSettings>(Configuration.GetSection("EmailSettings"))
             .Configure<TcpSettings>(Configuration.GetSection("TcpSettings"));

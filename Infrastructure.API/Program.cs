@@ -15,6 +15,7 @@ namespace Infrastructure.API
         public static void Main(string[] args)
         {
             
+            // Creacion del host para los microservicios
             MicroserviceHost.Build<StartupCommunication>("appsettings.json").UseTcp<TcpSettings>().Run();
             
             // Creacion del servidor Web API

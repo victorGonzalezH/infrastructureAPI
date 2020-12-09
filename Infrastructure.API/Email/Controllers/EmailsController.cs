@@ -126,6 +126,7 @@ namespace Infrastructure.API.EmailService.Controllers
                 SendEmailCommand sendEmailCommand =  message.DeserializeParamValues<SendEmailCommand>();
                 bool result = await this.emailApplication.Send(sendEmailCommand);
                 return result;
+
             }
             catch(Exception ex)
             {
