@@ -114,6 +114,7 @@ namespace Infrastructure.API
 
                  //Se agrega el manejador de las plantillas de correo
                 services.AddTransient<ITemplatesManager, TemplatesManager>();
+
                     
         }
 

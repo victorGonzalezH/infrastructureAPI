@@ -8,14 +8,19 @@ using System;
 
 using Infrastructure.API.EmailService.Controllers;
 using Infrastructure.API.Net.Controllers;
+using Infrastructure.API.SMS.Controllers;
 using Infrastructure.Application.Email;
 using Infrastructure.Application.Net;
+using Infrastructure.Application.SMS;
+
 using Utils.Email;
 using Utils.IO.Templates;
 using Utils.IO.Templates.Html;
 using ApplicationLib.Microservices;
 using ApplicationLib.Microservices.Messages;
 using ApplicationLib.Microservices.Controllers;
+
+using Amazon.SimpleNotificationService;
 
 namespace Infrastructure.API 
 {
@@ -35,11 +40,14 @@ namespace Infrastructure.API
             this.AddTransient<IEmailApplication, EmailApplication>()
             .AddTransient<IMicroserviceController, EmailsController>()
             .AddTransient<IMicroserviceController, NetController>()
+            .AddTransient<IMicroserviceController, SmsController>()
             .AddTransient<IEmailClient, EmailClient>()
             .AddTransient<IHtmlParser, HtmlParser>()
             .AddTransient<ITemplatesManager, TemplatesManager>()
             .AddTransient<ISmtpClientWrapper, SmtpClientWrapper>()
-            .AddSingleton<INetApplication, NetApplication>() 
+            .AddTransient<ISmsApplication, SmsApplication>()
+            .AddSingleton<INetApplication, NetApplication>()
+            .AddTransient<IAmazonSimpleNotificationService>(s => new AmazonSimpleNotificationServiceClient(region: Amazon.RegionEndpoint.USEast2)) 
             .AddSingleton<EmailSettings>(sp => sp.GetRequiredService<IOptions<EmailSettings>>().Value)
             .Configure<EmailSettings>(Configuration.GetSection("EmailSettings"))
             .Configure<TcpSettings>(Configuration.GetSection("TcpSettings"));

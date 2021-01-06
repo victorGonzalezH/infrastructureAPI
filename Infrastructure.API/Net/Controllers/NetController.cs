@@ -12,6 +12,7 @@ using ApplicationLib.Microservices;
 using ApplicationLib.Microservices.Controllers;
 using ApplicationLib.Microservices.Messages;
 using Infrastructure.Application.Net;
+using Infrastructure.Application.Net.UseCases.RunTcpServer;
 
 namespace Infrastructure.API.Net.Controllers
 {
@@ -31,8 +32,8 @@ namespace Infrastructure.API.Net.Controllers
         {
             try
             {
-                this.netApplication.RunTcpServer(message.GetClient(), 6000, "localhost", 8000, ForwardMessageType.ByteArray); 
-                return "Hola";
+                RunTcpServerCommand runTcpServerCommand =  message.DeserializeParamValues<RunTcpServerCommand>();
+                return this.netApplication.RunTcpServer(message.GetClient(), runTcpServerCommand);
                 
             }
             catch(Exception ex)
