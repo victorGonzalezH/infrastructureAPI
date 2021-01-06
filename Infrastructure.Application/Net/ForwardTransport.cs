@@ -27,7 +27,9 @@ namespace Infrastructure.Application.Net
         ByteArray = 7
     }
 
-
+    /// <summary>
+    /// Clase ayuda para hacer la restransmision de un mensaje recibido por tcp hacia un microservicio
+    /// </summary>
     public class ForwardTransport 
     {
         private TcpServer tcpServer;
