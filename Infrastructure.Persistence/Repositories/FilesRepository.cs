@@ -6,16 +6,16 @@ using System.Text;
 
 namespace Infrastructure.Persistence.Repositories
 {
-    public class FilesRepository//: Repository<File>, IFilesRepository
+    public class FilesRepository : Repository<File>, IFilesRepository
     {
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="context"></param>
-        public FilesRepository(InfrastructureContext context) //: base(context)
+        public FilesRepository(InfrastructureContext context) : base(context)
         {
-
+                
 
         }
 

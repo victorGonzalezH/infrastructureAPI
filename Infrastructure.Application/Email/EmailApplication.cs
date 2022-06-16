@@ -7,7 +7,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-﻿using Infrastructure.Application.Email;
+using Infrastructure.Application.Email;
 using Utils.Email;
 using Utils.IO.Templates;
 using Utils.IO.Templates.Html;
@@ -22,7 +22,7 @@ namespace Infrastructure.Application.Email
     /// <summary>
     /// 
     /// </summary>
-    public class EmailApplication: IEmailSendCompleted, IEmailApplication
+    public class EmailApplication : IEmailSendCompleted, IEmailApplication
     {
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Infrastructure.Application.Email
         /// </summary>
         private bool sendSucess;
 
-        
+
         /// <summary>
         /// Indica si la configuracion de la aplicacion de correo es correcta
         /// </summary>
@@ -111,18 +111,18 @@ namespace Infrastructure.Application.Email
         public EmailApplication(EmailSettings settings, IEmailClient emailClient, IHtmlParser htmlParser, ITemplatesManager templatesManager)
         {
 
-            this.emailClient        = emailClient;
+            this.emailClient = emailClient;
 
-            this.htmlParser         = htmlParser;
+            this.htmlParser = htmlParser;
 
-            this.templatesManager   = templatesManager;
+            this.templatesManager = templatesManager;
 
-            this.settings           = settings;
+            this.settings = settings;
 
             sendSucess = false;
-            
+
             this.Config(settings.HostName, settings.Port, settings.UserName, settings.Password, settings.Domain, settings.EnableSsl);
-                       
+
         }
 
 
@@ -166,12 +166,12 @@ namespace Infrastructure.Application.Email
         /// <param name="webDomain"></param>
         public EmailApplication(string hostName, int port, string userName, string password, string displayName, string domain, string webDomain)
         {
-            this.hostName       = hostName;
-            this.port           = port;
-            this.userName       = userName;
-            this.password       = password;
-            this.displayName    = displayName;
-            this.webDomain      = webDomain;
+            this.hostName = hostName;
+            this.port = port;
+            this.userName = userName;
+            this.password = password;
+            this.displayName = displayName;
+            this.webDomain = webDomain;
 
             emailClient = new EmailClient(EMAIL_CLIENT_TYPES.SMTP, hostName, port, userName, password, domain);
 
@@ -300,9 +300,9 @@ namespace Infrastructure.Application.Email
                     //Si la plantilla es de tipo HTMl
                     switch ((TemplateType)templateTypeId)
                     {
-                        
+
                         case TemplateType.HTML:
-                            
+
                             //Se analiza el documento con en analizador de HTMl
                             if (htmlParser != null && htmlParser.LoadDocument(template.Content))
                             {
@@ -313,7 +313,7 @@ namespace Infrastructure.Application.Email
                                 {
                                     string directoryPath = template.DirectoryName;
 
-                                    alternateViews  = new List<AlternateView>();
+                                    alternateViews = new List<AlternateView>();
                                     List<LinkedResource> linkedResources = new List<LinkedResource>();
                                     linkedResources.AddRange(GetLinkedResources(htmlParser.GetHtmlImgTags(), directoryPath, "image/png"));
 
@@ -323,9 +323,9 @@ namespace Infrastructure.Application.Email
                                     foreach (LinkedResource linkedResource in linkedResources)
                                     {
                                         //AlternateView alternateView = GetEmbeddedImage(linkedResource, htmlParser.GetHtml());
-                                        
+
                                         alternateView.LinkedResources.Add(linkedResource);
-                                        
+
                                     }
 
                                     alternateViews.Add(alternateView);
@@ -376,7 +376,7 @@ namespace Infrastructure.Application.Email
             try
             {
                 List<LinkedResource> linkedResources = new List<LinkedResource>();
-                
+
                 //Por cada imagen en el HTML se crean los recursos enlazados
                 foreach (HtmlImageObject htmlImgTag in htmlImageObjects)
                 {
@@ -397,7 +397,7 @@ namespace Infrastructure.Application.Email
                 throw ex;
             }
 
-            
+
         }
 
         /// <summary>
@@ -432,7 +432,7 @@ namespace Infrastructure.Application.Email
         /// <param name="exception"></param>
         public void Completed(object userState, bool success, Exception exception)
         {
-           
+
         }
 
 
@@ -456,10 +456,10 @@ namespace Infrastructure.Application.Email
 
             //Se restablece la bandera de operacion a falso para la siguiente operacion de envio
             sendSucess = false;
-            
+
         }
 
-      
+
 
         public Task<bool> Send(SendEmailCommand sendEmailCommand)
         {
@@ -480,10 +480,10 @@ namespace Infrastructure.Application.Email
                         throw new BadRequestException();
                     }
 
-                    string from     = settings.UserName + settings.WebDomain;
-                    string[] ccs    = sendEmailCommand.Ccs == null ? new string[] { } : sendEmailCommand.Ccs;
-                    string[] bccs   = sendEmailCommand.Bccs == null ? new string[] { } : sendEmailCommand.Bccs;
-                    string[] tos    = sendEmailCommand.Tos;
+                    string from = settings.UserName + settings.WebDomain;
+                    string[] ccs = sendEmailCommand.Ccs == null ? new string[] { } : sendEmailCommand.Ccs;
+                    string[] bccs = sendEmailCommand.Bccs == null ? new string[] { } : sendEmailCommand.Bccs;
+                    string[] tos = sendEmailCommand.Tos;
 
                     emailClient.Send(from, displayName, tos, ccs, bccs, sendEmailCommand.Subject, sendEmailCommand.Body, sendEmailCommand.IsBodyHtml, null, Encoding.UTF8, tcs, this);
 
@@ -491,7 +491,7 @@ namespace Infrastructure.Application.Email
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

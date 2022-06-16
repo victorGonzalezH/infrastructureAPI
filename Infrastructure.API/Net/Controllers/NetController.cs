@@ -18,7 +18,7 @@ namespace Infrastructure.API.Net.Controllers
 {
     [MicroserviceController("Net")]
     [Route("api/[controller]")]
-    public class NetController: IMicroserviceController
+    public class NetController : IMicroserviceController
     {
         private INetApplication netApplication;
 
@@ -32,11 +32,12 @@ namespace Infrastructure.API.Net.Controllers
         {
             try
             {
-                RunTcpServerCommand runTcpServerCommand =  message.DeserializeParamValues<RunTcpServerCommand>();
+
+                RunTcpServerCommand runTcpServerCommand = message.DeserializeParamValues<RunTcpServerCommand>();
                 return this.netApplication.RunTcpServer(message.GetClient(), runTcpServerCommand);
-                
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

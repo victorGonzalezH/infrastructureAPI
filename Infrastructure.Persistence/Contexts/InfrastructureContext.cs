@@ -10,19 +10,20 @@ using Utils.DB;
 
 namespace Infrastructure.Persistence.Contexts
 {
-    public interface IInfrastructureContext {
+    public interface IInfrastructureContext
+    {
 
         IMongoCollection<T> Set<T>();
 
     }
 
-    public class InfrastructureContext: IInfrastructureContext
+    public class InfrastructureContext : IInfrastructureContext
     {
 
         /// <summary>
         /// Archivos / Files
         /// </summary>
-        public IMongoCollection<File> Files { get; set;}
+        public IMongoCollection<File> Files { get; set; }
 
 
         /// <summary>
@@ -39,22 +40,22 @@ namespace Infrastructure.Persistence.Contexts
         /// <param name="connectionString"></param>
         public InfrastructureContext(IInfrastructureConnectionString settings)
         {
-              MongoClient client = new MongoClient(settings.GetMongoConnectionString());
-              IMongoDatabase database = client.GetDatabase(settings.Database);
+            MongoClient client = new MongoClient(settings.GetMongoConnectionString());
+            IMongoDatabase database = client.GetDatabase(settings.Database);
 
-              Files = database.GetCollection<File>("Files");
+            Files = database.GetCollection<File>("Files");
 
         }
 
-       public IMongoCollection<T> Set<T>()
+        public IMongoCollection<T> Set<T>()
         {
             //string modelName = typeof(T).Name;
             PropertyInfo[] propertyInfos = this.GetType().GetProperties();
-            foreach(PropertyInfo propertyInfo in propertyInfos)
+            foreach (PropertyInfo propertyInfo in propertyInfos)
             {
                 Type t1 = propertyInfo.PropertyType;
                 Type t2 = typeof(IMongoCollection<T>);
-                if(t1 == t2)
+                if (t1 == t2)
                 {
                     return propertyInfo.GetValue(this) as IMongoCollection<T>;
                 }

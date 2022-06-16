@@ -1,8 +1,10 @@
 using Utils.DB;
-public class InfrastructureConnectionString: ConnectionString, IInfrastructureConnectionString { 
+public class InfrastructureConnectionString : ConnectionString, IInfrastructureConnectionString
+{
 
 
-    public InfrastructureConnectionString(ConnectionString cs)  {
+    public InfrastructureConnectionString(ConnectionString cs)
+    {
 
         this.Database = cs.Database;
         this.Host = cs.Host;
@@ -14,10 +16,10 @@ public class InfrastructureConnectionString: ConnectionString, IInfrastructureCo
 
     public InfrastructureConnectionString()
     {
-        
+
     }
 }
-public interface IInfrastructureConnectionString: IConnection 
+public interface IInfrastructureConnectionString : IConnection
 {
 
 }

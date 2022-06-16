@@ -29,14 +29,12 @@ using Utils.IO.Templates.Html;
 using Utils.IO.Images;
 using Utils.DB;
 
-
-
 namespace Infrastructure.API
 {
     public class Startup
     {
 
-         #region Propiedades
+        #region Propiedades
 
         public IConfiguration Configuration { get; }
 
@@ -56,66 +54,67 @@ namespace Infrastructure.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-                
-
-                services.AddControllers();
 
 
-                //Se agrega la configuracion del servicio de archivos
-                services.Configure<FileApiSettings>(Configuration.GetSection("FileApiSettings"));
-
-                //Se agrega la configuracion de correo electronico para el servicio de correo
-                services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
-
-                services.AddSingleton<EmailSettings>(sp => sp.GetRequiredService<IOptions<EmailSettings>>().Value);
-
-                //Se agrega el servicio de aplicacion para la gestion de archivos 
-                services.AddTransient(typeof(IFilesApplication), typeof(FilesApplication));
+            services.AddControllers();
 
 
-                //Se agrega el servicio de manejador de archivos
-                services.AddTransient(typeof(IFilesManager), typeof(FilesManager));
-
-                
-                services.AddTransient(typeof(IInfrastructureUnitOfWork), typeof(UnitOfWork));
-
-                services.AddTransient(typeof(IInfrastructureContext), typeof(InfrastructureContext));
-
-                services.Configure<List<ConnectionString>>(Configuration.GetSection("ConnectionStrings"));
-                
-                services.AddSingleton<List<ConnectionString>>(sp => sp.GetRequiredService<IOptions<List<ConnectionString>>>().Value);
-
-                services.AddSingleton<IInfrastructureConnectionString>(sp => 
-                { 
-                    var connectionStrings = sp.GetRequiredService<IOptions<List<ConnectionString>>>().Value;
-                    ConnectionString connectionString = connectionStrings.FirstOrDefault( cs => cs.Name == "infrastructure");
-                    return new InfrastructureConnectionString(connectionString){  };
-                });
+            //Se agrega la configuracion del servicio de archivos
+            services.Configure<FileApiSettings>(Configuration.GetSection("FileApiSettings"));
 
 
-                //Se agrega el servicios de repositorio de los archivos (clase File)
-                services.AddTransient(typeof(SeedWork.IRepository<Infrastructure.Domain.Files.File>), typeof(Infrastructure.Persistence.Repositories.Repository<Infrastructure.Domain.Files.File>));
+            //Se agrega la configuracion de correo electronico para el servicio de correo
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
+            services.AddSingleton<EmailSettings>(sp => sp.GetRequiredService<IOptions<EmailSettings>>().Value);
+
+            //Se agrega el servicio de aplicacion para la gestion de archivos 
+            services.AddTransient(typeof(IFilesApplication), typeof(FilesApplication));
+
+
+            //Se agrega el servicio de manejador de archivos
+            services.AddTransient(typeof(IFilesManager), typeof(FilesManager));
+
+
+            services.AddTransient(typeof(IInfrastructureUnitOfWork), typeof(UnitOfWork));
+
+            services.AddTransient(typeof(IInfrastructureContext), typeof(InfrastructureContext));
+
+            services.Configure<List<ConnectionString>>(Configuration.GetSection("ConnectionStrings"));
+
+            services.AddSingleton<List<ConnectionString>>(sp => sp.GetRequiredService<IOptions<List<ConnectionString>>>().Value);
+
+            services.AddSingleton<IInfrastructureConnectionString>(sp =>
+            {
+                var connectionStrings = sp.GetRequiredService<IOptions<List<ConnectionString>>>().Value;
+                ConnectionString connectionString = connectionStrings.FirstOrDefault(cs => cs.Name == "infrastructure");
+                return new InfrastructureConnectionString(connectionString) { };
+            });
+
+
+            //Se agrega el servicios de repositorio de los archivos (clase File)
+            services.AddTransient(typeof(SeedWork.IRepository<Infrastructure.Domain.Files.File>), typeof(Infrastructure.Persistence.Repositories.Repository<Infrastructure.Domain.Files.File>));
 
 
 
-                //Se agrega el servicio del cliente de correo
-                services.AddTransient(typeof(IEmailClient), typeof(EmailClient));
+            //Se agrega el servicio del cliente de correo
+            services.AddTransient(typeof(IEmailClient), typeof(EmailClient));
 
 
-                //Se agrega el servicio del cliente de SMTP
-                services.AddTransient(typeof(ISmtpClientWrapper), typeof(SmtpClientWrapper));
+            //Se agrega el servicio del cliente de SMTP
+            services.AddTransient(typeof(ISmtpClientWrapper), typeof(SmtpClientWrapper));
 
-                   //Se agrega el servicio de la aplicacion de correo
-                services.AddTransient(typeof(IEmailApplication), typeof(EmailApplication));
+            //Se agrega el servicio de la aplicacion de correo
+            services.AddTransient(typeof(IEmailApplication), typeof(EmailApplication));
 
 
-                //Se agrega el servicio de Analizador de HTMl
-                services.AddTransient(typeof(IHtmlParser), typeof(HtmlParser));
+            //Se agrega el servicio de Analizador de HTMl
+            services.AddTransient(typeof(IHtmlParser), typeof(HtmlParser));
 
-                 //Se agrega el manejador de las plantillas de correo
-                services.AddTransient<ITemplatesManager, TemplatesManager>();
+            //Se agrega el manejador de las plantillas de correo
+            services.AddTransient<ITemplatesManager, TemplatesManager>();
 
-                    
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
